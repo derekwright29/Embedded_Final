@@ -10,7 +10,8 @@
 typedef enum {
 	IDLE,
 	ACTIVE,
-	TASK_ACTIVE
+	TASK_ACTIVE,
+	SOS
 } state_t;
 
 volatile state_t state = IDLE;

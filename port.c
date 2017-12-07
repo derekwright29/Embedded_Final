@@ -55,7 +55,7 @@ void config_buttons(void) {
 
 
 void PORT2_IRQHandler(void) {
-	state = TASK_ACTIVE;
+	state = SOS;
 	emergency = 1;
 }
 void PORT4_IRQHandler(void) {
