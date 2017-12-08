@@ -5,15 +5,17 @@
  *      Author: admin
  */
 #include "msp.h"
+#include "port.h"
 
-volatile uint8_t pet = 0;
-volatile uint8_t apps = 0;
-volatile uint8_t lock = 0;
-volatile uint8_t emergency = 0;
+extern volatile state_t state;
+extern volatile uint8_t pet;
+extern volatile uint8_t apps;
+extern volatile uint8_t lock;
+extern volatile uint8_t emergency;
 
-volatile uint8_t finger = 0;
+extern volatile uint8_t finger;
 
-volatile uint8_t fall = 0;
+extern volatile uint8_t fall;
 
 void config_buttons(void) {
 	//SOS BUTTON
@@ -51,6 +53,14 @@ void config_buttons(void) {
 	P6->IES |= (BIT6); //Set high to low transition
 
 	NVIC_EnableIRQ(PORT6_IRQn);
+}
+
+void config_buzzer() {
+	//config buzzer
+	P3->SEL0 &= ~BIT0;
+	P3->SEL1 &= ~BIT0;
+	P3->DIR |= BIT0; //output
+	P3->OUT &= ~BIT0; //low
 }
 
 
