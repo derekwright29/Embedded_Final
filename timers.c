@@ -16,6 +16,9 @@ extern volatile uint8_t emergency;
 
 extern volatile uint8_t fall;
 
+extern volatile uint32_t timer0;
+extern volatile uint32_t timer1;
+
 //Timer for reminders. Should be set for div64, meaning every interrupt is every 1.4 seconds.
 //Have a global var for making it like 30 second reminders for demo.
 //Interrupt enabled in the button handlers.
@@ -74,11 +77,19 @@ void config_TA1() {
 void TA0_0_IRQHandler() {
 	TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
 	timer0++;
-	if(timer0 == 30) print = 1;
+	if(timer0 == 30) {
+		print = 1;
+		timer0 = 0;
+	}
 }
 
 void TA1_0_IRQHandler() {
 	TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
+	timer1++;
+	if (timer1 >= 1000) {
+		timer1 = 0;
+		TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIE; //turn off buzzer
+	}
 	//buzzer pin
 	P3->OUT ^= BIT0;
 }
