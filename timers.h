@@ -7,7 +7,11 @@
 
 #ifndef TIMERS_H_
 #define TIMERS_H_
+
 #include <stdint.h>
+#include "msp.h"
+
+#define TASK_TIMER_CYCLES 4
 
 typedef enum {
 	TIMER0,

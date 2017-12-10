@@ -9,19 +9,6 @@
 #define PORT_H_
 #include <stdint.h>
 
-typedef enum {
-	IDLE,
-	ACTIVE,
-	TASK_ACTIVE,
-	SOS
-} state_t;
-
-void update_state_t(void);
-
-void UART_send_byteA2(uint8_t data);
-void UART_send_byteA0(uint8_t data);
-void UART_send_A2(uint8_t * data, uint32_t length);
-void UART_send_A0(uint8_t * data, uint32_t length);
 
 void config_finger();
 void config_buttons();

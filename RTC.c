@@ -4,13 +4,19 @@
  *  Created on: Nov 28, 2017
  *      Author: admin
  */
+#include "msp.h"
+#include "RTC.h"
+#include "UART.h"
 
-#include RTC.h
+
+extern volatile uint8_t read;
+extern volatile uint8_t temp_sec; //init out of range. This var is for debouncing.
+extern volatile uint8_t RTC_str[4];
 
 void config_RTC() {
 
 	RTC_C->CTL0 = RTC_C_KEY | RTC_C_CTL0_RDYIE; // unlock RTC
-	RTC_C->CTL13 |= (RTC_C_CTL13_HOLD | RTCBCD | RTC_C_CTL13_MODE);
+	RTC_C->CTL13 |= (RTC_C_CTL13_HOLD | RTCBCD);
 
 	RTC_C->YEAR = YEAR_INIT;                   // Year = 0x2017
 	RTC_C->DATE = (MONTH_INIT << RTC_C_DATE_MON_OFS) | // Month = 0x12 = Dec
@@ -31,25 +37,42 @@ void config_RTC() {
 
 void RTC_C_IRQHandler() {
 	if(RTC_C->CTL0 & RTCRDYIFG) {
-		RTC_C->CTL0 = RTC_C_KEY; //clear flag
-		RTC_C->CTL0 = (RTC_C_KEY | RTCRDYIE); //re-enable interrupt
-		min_sec = RTC_C->TIM0;
-		hr_dow = RTC_C->TIM1;
-
+		RTC_C->CTL0 = RTC_C_KEY;
+		RTC_C->CTL0 = RTC_C_KEY | RTCRDYIE; //clear flag
 		read = 1;
 	}
 }
 
-void manip_register_data() {
-	sec_hex = min_sec % (1 << RTC_C_TIM0_MIN_OFS);
-	min_hex = min_sec >> RTC_C_TIM0_MIN_OFS;
-	sec = (sec_hex>>4)*10 + (sec_hex % 16);
-	min = (min_hex >>4)*10 + (min_hex %16);
-	//if (min == 0) {
-		hr_hex = (hr_dow % 256);
-		hr = (hr_hex>>4)*10 + (hr_hex % 16);
-	//}
-	//if(hr == 0) {
-		dow = hr_dow >> DAYOFWEEK_OFS;
-	//}
+void getCurrentTime(){
+	currentTime.year = (RTC_C->YEAR >> 12)*1000 + ((RTC_C->YEAR>>8)%16)*100 + ((RTC_C->YEAR>>4)%16)*10 + RTC_C->YEAR%16;
+	currentTime.month = (RTC_C->DATE >> 12)*10 + ((RTC_C->DATE >> 8) % 16);
+	currentTime.dom = ((RTC_C->DATE % (1 << RTC_C_DATE_MON_OFS))>>4)*10 + (RTC_C->DATE % 16);
+	currentTime.hour = ((RTC_C->TIM1 % (1 << DAYOFWEEK_OFS)) >> 4)*10 + (RTC_C->TIM1 % (1 << DAYOFWEEK_OFS)) % 16;
+	currentTime.min = ((RTC_C->TIM0 >> RTC_C_TIM0_MIN_OFS)>>4)*10 + (RTC_C->TIM0 >> RTC_C_TIM0_MIN_OFS) % 16;
+	currentTime.sec = ((RTC_C->TIM0 % (1 << RTC_C_TIM0_MIN_OFS))>>4)*10 + (RTC_C->TIM0 % (1 << RTC_C_TIM0_MIN_OFS))%16;
+}
+
+void sendCurrentTime() {
+	getCurrentTime();
+	itoa(currentTime.year, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 4);
+	UART_send_byteA0('-');
+	itoa(currentTime.month, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 2);
+	UART_send_byteA0('-');
+	itoa(currentTime.dom, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 2);
+	UART_send_byteA0(',');
+	UART_send_byteA0(' ');
+	itoa(currentTime.hour, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 2);
+	UART_send_byteA0(':');
+	itoa(currentTime.min, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 2);
+	UART_send_byteA0(':');
+	itoa(currentTime.sec, (char*)RTC_str);
+	UART_send_A0((const uint8_t*)RTC_str, 2);
+	UART_send_byteA0('-');
+	UART_send_byteA0('-');
+	UART_send_byteA0('\r');
 }

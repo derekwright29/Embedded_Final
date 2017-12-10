@@ -12,6 +12,11 @@ timers.obj: /Applications/ti/ccsv7/ccs_base/arm/include/msp432p401r_classic.h
 timers.obj: /Applications/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cm4.h
 timers.obj: /Applications/ti/ccsv7/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 timers.obj: /Applications/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h
+timers.obj: ../UART.h
+timers.obj: ../FPS.h
+timers.obj: /Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/string.h
+timers.obj: /Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/linkage.h
+timers.obj: ../state.h
 
 ../timers.c: 
 ../port.h: 
@@ -25,3 +30,8 @@ timers.obj: /Applications/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h
 /Applications/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cm4.h: 
 /Applications/ti/ccsv7/ccs_base/arm/include/CMSIS/cmsis_compiler.h: 
 /Applications/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h: 
+../UART.h: 
+../FPS.h: 
+/Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/string.h: 
+/Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/linkage.h: 
+../state.h: 
