@@ -6,6 +6,9 @@
  */
 #include "msp.h"
 #include "port.h"
+ uint8_t G_phrase[] = "Feed Pets! ";
+  uint8_t B_phrase[] = "Lock Doors! ";
+  uint8_t W_phrase[] = "Turn Off Stove! ";
 
 extern volatile state_t state;
 
@@ -17,6 +20,14 @@ extern volatile uint8_t emergency;
 extern volatile uint8_t finger;
 
 extern volatile uint8_t fall;
+
+void update_state_t(void) {
+	if (pet || apps || lock)
+		{
+			state = TASK_ACTIVE;
+		}
+	else state = ACTIVE;
+}
 
 void config_buttons(void) {
 	//SOS BUTTON -- Red
@@ -157,11 +168,17 @@ REMINDER_STATUS GetButtonState(uint8_t G_ID, uint8_t B_ID, uint8_t W_ID){
         return;
     }
 
+void UART_send_A0(uint8_t * data, uint32_t length){
+    int i = 0;
+    for(i=0 ; i<length ; i++){
+        UART_send_byteA0(data[i]);
+    }
+}
 
-
-
-
-
+void UART_send_byteA0(uint8_t data){
+   while((EUSCI_A0->STATW & EUSCI_A_STATW_BUSY)); //May have to change to using the TXIFG flag
+        EUSCI_A0->TXBUF = data;
+}
 
 
 void PORT2_IRQHandler(void) {

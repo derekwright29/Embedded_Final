@@ -7,6 +7,7 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
+../RTC.c \
 ../master-main.c \
 ../port.c \
 ../startup_msp432p401r_ccs.c \
@@ -14,6 +15,7 @@ C_SRCS += \
 ../timers.c 
 
 C_DEPS += \
+./RTC.d \
 ./master-main.d \
 ./port.d \
 ./startup_msp432p401r_ccs.d \
@@ -21,6 +23,7 @@ C_DEPS += \
 ./timers.d 
 
 OBJS += \
+./RTC.obj \
 ./master-main.obj \
 ./port.obj \
 ./startup_msp432p401r_ccs.obj \
@@ -28,6 +31,7 @@ OBJS += \
 ./timers.obj 
 
 OBJS__QUOTED += \
+"RTC.obj" \
 "master-main.obj" \
 "port.obj" \
 "startup_msp432p401r_ccs.obj" \
@@ -35,6 +39,7 @@ OBJS__QUOTED += \
 "timers.obj" 
 
 C_DEPS__QUOTED += \
+"RTC.d" \
 "master-main.d" \
 "port.d" \
 "startup_msp432p401r_ccs.d" \
@@ -42,6 +47,7 @@ C_DEPS__QUOTED += \
 "timers.d" 
 
 C_SRCS__QUOTED += \
+"../RTC.c" \
 "../master-main.c" \
 "../port.c" \
 "../startup_msp432p401r_ccs.c" \

@@ -16,6 +16,8 @@ extern volatile uint8_t emergency;
 
 extern volatile uint8_t fall;
 
+extern volatile uint8_t print;
+
 extern volatile uint32_t timer0;
 extern volatile uint32_t timer1;
 
@@ -77,7 +79,7 @@ void config_TA1() {
 void TA0_0_IRQHandler() {
 	TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
 	timer0++;
-	if(timer0 == 30) {
+	if(timer0 == 20) { //20*1.4 seconds before print.
 		print = 1;
 		timer0 = 0;
 	}

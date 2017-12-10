@@ -8,6 +8,7 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./RTC.obj" \
 "./master-main.obj" \
 "./port.obj" \
 "./startup_msp432p401r_ccs.obj" \
@@ -155,8 +156,8 @@ Embedded_Final.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "master-main.obj" "port.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "timers.obj" 
-	-$(RM) "master-main.d" "port.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "timers.d" 
+	-$(RM) "RTC.obj" "master-main.obj" "port.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "timers.obj" 
+	-$(RM) "RTC.d" "master-main.d" "port.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "timers.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
