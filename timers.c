@@ -16,12 +16,7 @@ extern volatile uint8_t count_time_fall;
 extern volatile uint8_t timer_exit;
 
 extern volatile state_t state;
-extern volatile uint8_t pet;
-extern volatile uint8_t apps;
-extern volatile uint8_t lock;
 extern volatile uint8_t emergency;
-
-extern volatile uint8_t fall;
 
 extern volatile uint8_t print;
 
@@ -50,7 +45,7 @@ void config_TA1() {
 	TIMER_A1->R = 0; // Reset count
 
 	// SMCLK, Up mode, interrupts enabled, div set to 8,
-	TIMER_A1->CCR[0] = 3000;// optimal beeping frequency
+	TIMER_A1->CCR[0] = BUZZ_FREQ_TASK;// optimal beeping frequency
 	TIMER_A1->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP;
 
 	/* Enable Interrupts in the NVIC */
@@ -91,19 +86,28 @@ void config_TA3(){
 
 void TA0_0_IRQHandler() {
 	TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
-	if()
 	timer0++;
-	if(timer0 == TASK_TIMER_CYCLES) { //CYCLES*1.4 seconds before print.
-		print = 1;
-		timer0 = 0;
-		TIMER_A1->CCTL[0] |= TIMER_A_CCTLN_CCIE;
+	if(state == SOS) {
+	    if(timer0 == SOS_TIMER_CYCLES) {
+	        TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;
+	        emergency = 1;
+	        timer0 = 0;
+	    }
+	}
+	else {
+
+        if(timer0 == TASK_TIMER_CYCLES) { //CYCLES*1.4 seconds before print.
+            print = 1;
+            timer0 = 0;
+            TIMER_A1->CCTL[0] |= TIMER_A_CCTLN_CCIE; // enable buzzer
+        }
 	}
 }
 
 void TA1_0_IRQHandler() {
 	TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
 	timer1++;
-	if (timer1 >= 1000) {
+	if (timer1 >= BUZZER_CYCLES) {
 		timer1 = 0;
 		TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIE; //turn off buzzer
 	}
@@ -112,12 +116,12 @@ void TA1_0_IRQHandler() {
 }
 
 void TA2_0_IRQHandler() {
-	TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;
+	TIMER_A2->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;
 	countTime++;
 	if(countTime == freqDiv) {
 	   countTime = 0;
 	   UART_send_A3("Please press finger\n", 20);
-	   TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;   // Capture/Compare interrupt disabled @ peripheral  (CCIE flag enabled)
+	   TIMER_A2->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;   // Capture/Compare interrupt disabled @ peripheral  (CCIE flag enabled)
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "UART.h"
 #include "RTC.h"
 #include "state.h"
+#include "timers.h"
 
 
 #define G_len (11)
@@ -60,17 +61,17 @@ void config_buttons() {
 	NVIC_EnableIRQ(PORT4_IRQn);
 
 	//LOCKS BUTTON -- blue
-	P5->SEL0 &= ~BIT6;
-	P5->SEL1 &= ~BIT6;
-	P5->DIR &= ~(BIT6); //input
-	P5->REN |= (BIT6); //Enabled pullup/pulldown resistors
-	P5->OUT |= (BIT6); //Pullup selected
+	P5->SEL0 &= ~BIT7;
+	P5->SEL1 &= ~BIT7;
+	P5->DIR &= ~(BIT7); //input
+	P5->REN |= (BIT7); //Enabled pullup/pulldown resistors
+	P5->OUT |= (BIT7); //Pullup selected
 	P5->IFG = 0; //Clears interrupt flags
-	P5->IES |= (BIT6); //Set high to low transition
+	P5->IES |= (BIT7); //Set high to low transition
 
 	NVIC_EnableIRQ(PORT5_IRQn);
 
-	//PETS BUTTON -- white
+	//PETS BUTTON -- black
 	P6->SEL0 &= ~BIT6;
 	P6->SEL1 &= ~BIT6;
 	P6->DIR &= ~(BIT6); //input
@@ -137,43 +138,43 @@ void PrintReminders(REMINDER_STATUS status){
 	switch(status)
 	{
 		case GWB:
-			UART_send_A0(G_phrase, G_len);
-			UART_send_A0(B_phrase, B_len);
-			UART_send_A0(W_phrase, W_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(G_phrase, G_len);
+			UART_send_A3(B_phrase, B_len);
+			UART_send_A3(W_phrase, W_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case G:
-			UART_send_A0(G_phrase, G_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(G_phrase, G_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case B:
-			UART_send_A0(B_phrase, B_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(B_phrase, B_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case W:
-			UART_send_A0(W_phrase, W_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(W_phrase, W_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case GB:
-			UART_send_A0(G_phrase, G_len);
-			UART_send_A0(B_phrase, B_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(G_phrase, G_len);
+			UART_send_A3(B_phrase, B_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case GW:
-			UART_send_A0(G_phrase, G_len);
-			UART_send_A0(W_phrase, W_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(G_phrase, G_len);
+			UART_send_A3(W_phrase, W_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		case BW:
-			UART_send_A0(B_phrase, B_len);
-			UART_send_A0(W_phrase, W_len);
-			UART_send_byteA0(0x0A);
+			UART_send_A3(B_phrase, B_len);
+			UART_send_A3(W_phrase, W_len);
+			UART_send_byteA3(0x0A);
 			break;
 
 		default:
@@ -183,17 +184,19 @@ void PrintReminders(REMINDER_STATUS status){
 }
 
 void PORT2_IRQHandler(void){
-	if((emergency) && (temp_sec != currentTime.sec)) {
-		emergency = 0;
+	if((state == SOS) && (temp_sec != currentTime.sec)) {
+	    TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;
 		temp_sec = currentTime.sec;
+		TIMER_A1->CCR[0] = BUZZ_FREQ_TASK;
+		state = ACTIVE;
 	}
 	else if((temp_sec == currentTime.sec) || temp_sec+1 == currentTime.sec){
 		P2->IFG = 0;
 		return;
 	}
 	else {
-		emergency = 1;
-		temp_sec = currentTime.sec;
+		TIMER_A1->CCR[0] = BUZZ_FREQ_TASK; //set buzz freq back to normal
+		state = ACTIVE;
 	}
 	P2->IFG = 0;
 }

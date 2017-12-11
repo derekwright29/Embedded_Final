@@ -16,5 +16,6 @@ typedef enum {
 } state_t;
 
 void update_state();
+void handle_state();
 
 #endif /* STATE_H_ */

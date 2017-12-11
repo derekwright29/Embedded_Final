@@ -9,12 +9,6 @@
 #define PORT_H_
 #include <stdint.h>
 
-
-void config_finger();
-void config_buttons();
-void config_buzzer();
-void acccel_port_config();
-
 #define G_len (11)
 #define B_len (12)
 #define W_len (16)
@@ -35,14 +29,17 @@ typedef enum REMINDER_STATUS {
 void PrintReminders(REMINDER_STATUS status);
 REMINDER_STATUS GetButtonState(uint8_t G_ID, uint8_t B_ID, uint8_t W_ID);
 
+void config_buttons();
+void config_buzzer();
+
+void PORT1_IRQHandler(void);
 void PORT2_IRQHandler(void);
 void PORT4_IRQHandler(void);
 void PORT5_IRQHandler(void);
 void PORT6_IRQHandler(void);
 
-//accel_pins_handlers();
-
-//finger_prin_stuff??();
+//finger_pins
+void GPIO_FPS_config();
 
 
 #endif /* PORT_H_ */

@@ -38,7 +38,7 @@ void config_RTC() {
 void RTC_C_IRQHandler() {
 	if(RTC_C->CTL0 & RTCRDYIFG) {
 		RTC_C->CTL0 = RTC_C_KEY;
-		RTC_C->CTL0 = RTC_C_KEY | RTCRDYIE; //clear flag
+		RTC_C->CTL0 = (RTC_C_KEY | RTCRDYIE); //clear flag
 		read = 1;
 	}
 }
@@ -55,24 +55,24 @@ void getCurrentTime(){
 void sendCurrentTime() {
 	getCurrentTime();
 	itoa(currentTime.year, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 4);
-	UART_send_byteA0('-');
+	UART_send_A3((const uint8_t*)RTC_str, 4);
+	UART_send_byteA3('-');
 	itoa(currentTime.month, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 2);
-	UART_send_byteA0('-');
+	UART_send_A3((const uint8_t*)RTC_str, 2);
+	UART_send_byteA3('-');
 	itoa(currentTime.dom, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 2);
-	UART_send_byteA0(',');
-	UART_send_byteA0(' ');
+	UART_send_A3((const uint8_t*)RTC_str, 2);
+	UART_send_byteA3(',');
+	UART_send_byteA3(' ');
 	itoa(currentTime.hour, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 2);
-	UART_send_byteA0(':');
+	UART_send_A3((const uint8_t*)RTC_str, 2);
+	UART_send_byteA3(':');
 	itoa(currentTime.min, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 2);
-	UART_send_byteA0(':');
+	UART_send_A3((const uint8_t*)RTC_str, 2);
+	UART_send_byteA3(':');
 	itoa(currentTime.sec, (char*)RTC_str);
-	UART_send_A0((const uint8_t*)RTC_str, 2);
-	UART_send_byteA0('-');
-	UART_send_byteA0('-');
-	UART_send_byteA0('\r');
+	UART_send_A3((const uint8_t*)RTC_str, 2);
+	UART_send_byteA3('-');
+	UART_send_byteA3('-');
+	UART_send_byteA3('\r');
 }

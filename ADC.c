@@ -6,8 +6,6 @@
  */
 #include "ADC.h"
 
-#define SCB_SCR_ENABLE_SLEEPONEXIT (0x00000002)
-
 extern volatile uint8_t count_time_fall;
 
 extern volatile uint8_t timer_exit;

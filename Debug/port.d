@@ -17,6 +17,7 @@ port.obj: /Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/st
 port.obj: /Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/linkage.h
 port.obj: ../RTC.h
 port.obj: ../state.h
+port.obj: ../timers.h
 
 ../port.c: 
 /Applications/ti/ccsv7/ccs_base/arm/include/msp.h: 
@@ -35,3 +36,4 @@ port.obj: ../state.h
 /Applications/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.3.LTS/include/linkage.h: 
 ../RTC.h: 
 ../state.h: 
+../timers.h: 

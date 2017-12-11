@@ -21,6 +21,7 @@ extern volatile uint8_t freqDiv;
 extern volatile uint8_t countTime;
 extern volatile uint8_t count_time_fall;
 extern volatile uint8_t timer_exit;
+extern volatile uint8_t FPS_byte_count;
 
 
 void FP_send_cmd(uint8_t * data, uint32_t length){
@@ -420,10 +421,10 @@ void Close()
   // Identify fingerprint test
 
            while(IsFingerPressed() == 0){
-               TIMER_A0->CCR[0] = 50000;
-               TIMER_A0->CCTL[0] |= TIMER_A_CCTLN_CCIE;   // Capture/Compare interrupt enabled @ peripheral  (CCIE flag enabled)
+               TIMER_A2->CCR[0] = 50000;
+               TIMER_A2->CCTL[0] |= TIMER_A_CCTLN_CCIE;   // Capture/Compare interrupt enabled @ peripheral  (CCIE flag enabled)
             }
-           TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;
+           TIMER_A2->CCTL[0] &= ~TIMER_A_CCTLN_CCIE;
 
            CaptureFinger(1);
            int id = ID_print();
@@ -495,12 +496,12 @@ void Close()
   }
 
   void WaitResponse(){
-          int i = 0;
+      FPS_byte_count = 0;
            while(FP_state == FP_WAIT_RSP);
-                 i = 0;
+             FPS_byte_count = 0;
            if(FP_state == FP_PROCESS_RSP){
                ProcessRSP();
            }
-               i = 0;
+            FPS_byte_count = 0;
        }
 

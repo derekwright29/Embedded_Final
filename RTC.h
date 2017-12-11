@@ -34,6 +34,7 @@ extern volatile RealTime_t currentTime;
 
 void config_RTC();
 void RTC_C_IRQHandler();
-void manip_register_data();
+void sendCurrentTime();
+void getCurrentTime();
 
 #endif /* RTC_H_ */

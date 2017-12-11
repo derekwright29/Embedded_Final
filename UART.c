@@ -11,6 +11,7 @@ extern volatile uint8_t FP_state;
 uint8_t i;
 extern volatile  uint8_t data_databuf[30];
 extern volatile  uint8_t rsp_databuf[12];
+extern volatile uint8_t FPS_byte_count;
 
 void reverse(char s[])
  {
@@ -43,8 +44,8 @@ void itoa(int n, char s[])
      if(EUSCI_A2->IFG & EUSCI_A_IFG_RXIFG){
          if (FP_state == FP_WAIT_RSP)
              {
-                 rsp_databuf[i++]= EUSCI_A2->RXBUF;
-                 if(i == FP_RSP_PACKET_LENGTH)
+                 rsp_databuf[FPS_byte_count++]= EUSCI_A2->RXBUF;
+                 if(FPS_byte_count == FP_RSP_PACKET_LENGTH)
                      {
                          FP_state = FP_PROCESS_RSP;
                          EUSCI_A2->IFG &= ~EUSCI_A_IFG_RXIFG;
@@ -52,8 +53,8 @@ void itoa(int n, char s[])
              }
          else if (FP_state == FP_WAIT_DATA)
              {
-                 data_databuf[i++] = EUSCI_A2->RXBUF;
-                 if(i == FP_DATA_PACKET_LENGTH )
+                 data_databuf[FPS_byte_count++] = EUSCI_A2->RXBUF;
+                 if(FPS_byte_count == FP_DATA_PACKET_LENGTH )
                      {
                          FP_state = FP_PROCESS_RSP;
                          EUSCI_A2->IFG &= ~EUSCI_A_IFG_RXIFG;
